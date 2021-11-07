@@ -1,0 +1,16 @@
+beautifulsoup4
+bs4
+certifi
+charset-normalizer
+cloudscraper
+idna
+numpy
+pandas
+pyparsing
+python-dateutil
+pytz
+requests
+requests-toolbelt
+six==1.16.0
+soupsieve
+urllib3
