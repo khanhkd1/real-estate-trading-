@@ -1,4 +1,4 @@
-certifi==2021.10.8
-greenlet==1.1.2
-mysqlclient==2.0.3
-SQLAlchemy==1.4.27
+certifi
+greenlet
+mysqlclient
+SQLAlchemy

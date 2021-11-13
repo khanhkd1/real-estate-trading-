@@ -1,7 +1,7 @@
 import json
 from model import connect_to_db, Post, Image
 import random
-import time
+import datetime
 
 Session = connect_to_db()
 
@@ -11,25 +11,28 @@ def add_post(record, session_):
         user_id=1,
         title=record['title'],
         address=record['address'],
-        bedroom=int(record['bedroom']),
-        toilet=int(record['toilet']),
+        bedroom=record['bedroom'],
+        toilet=record['toilet'],
         investor=record['investor'],
         acreage=record['acreage'],
         price=record['price'],
         latitude=record['lat'],
         longitude=record['long'],
         sold=bool(random.getrandbits(1)),
-        time_upload=time.time(),
-        time_priority=time.time(),
+        time_upload=datetime.datetime.now(),
+        time_priority=datetime.datetime.now(),
         distance=record['distance'],
         description=record['description']
     )
     session_.add(post)
     session_.flush()
+    
+    post_id = post.post_id
+    session_.commit()
 
     for image_ in record['images']:
         image = Image(
-            post_id=post.post_id,
+            post_id=post_id,
             image_url=image_
         )
         session_.add(image)
@@ -45,4 +48,4 @@ if __name__ == '__main__':
     for i, record in enumerate(data):
         add_post(record, session)
         print(f'done: {i}')
-        break
+

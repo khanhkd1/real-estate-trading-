@@ -13,7 +13,7 @@ def connect_to_db():
 
 class Post(Base):
     __tablename__ = 'post'
-    post_id = Column(Integer, primary_key=True)
+    post_id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(Integer, primary_key=True)
     title = Column(String)
     address = Column(String)
@@ -33,6 +33,6 @@ class Post(Base):
 
 class Image(Base):
     __tablename__ = 'image'
-    image_id = Column(Integer, primary_key=True)
+    image_id = Column(Integer, primary_key=True, autoincrement=True)
     post_id = Column(Integer, ForeignKey('post.post_id'))
     image_url = Column(String)
