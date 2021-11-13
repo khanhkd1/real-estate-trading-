@@ -39,7 +39,7 @@ def add_post(record, session_):
 
 if __name__ == '__main__':
     session = Session()
-    with open('/Users/khnhkd/WorkSpace/python_proj/real-estate-trading-/data-process/data-to-db.json') as js_file:
+    with open('data-to-db.json') as js_file:
         data = json.load(js_file)
 
     for i, record in enumerate(data):
