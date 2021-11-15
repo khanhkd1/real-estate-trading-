@@ -21,6 +21,7 @@ platformdirs==2.4.0
 pycparser==2.21
 PyJWT==2.3.0
 PyMySQL==1.0.2
+python-dotenv==0.19.2
 pytz==2021.3
 scramp==1.2.0
 six==1.16.0
