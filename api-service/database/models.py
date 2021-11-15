@@ -1,5 +1,8 @@
-from .db import db
 from flask_bcrypt import generate_password_hash, check_password_hash
+from sqlalchemy.exc import IntegrityError
+from flask_jwt_extended import create_access_token
+import datetime
+from .db import db
 
 
 class Privilege(db.Model):
@@ -7,10 +10,13 @@ class Privilege(db.Model):
     privilege_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
 
+    def __repr__(self):
+        return self.name
+
 
 class Avatar(db.Model):
     __tablename__ = 'avatar'
-    avatar_id = db.Column(db.Integer, primary_key=True)
+    avatar_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     avatar_url = db.Column(db.String)
 
     def __repr__(self):
@@ -19,7 +25,7 @@ class Avatar(db.Model):
 
 class User(db.Model):
     __tablename__ = 'user'
-    user_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String, nullable=False, unique=True)
     password = db.Column(db.String, nullable=False)
     email = db.Column(db.String, unique=True)
@@ -39,8 +45,16 @@ class User(db.Model):
     def sign_up(self):
         self.hash_password()
         db.session.add(self)
-        db.session.commit()
-        return self
+        try:
+            db.session.commit()
+            return True
+        except IntegrityError:
+            db.session.rollback()
+            return False
+
+    def sign_in(self):
+        expires = datetime.timedelta(days=7)
+        return create_access_token(identity=str(self.user_id), expires_delta=expires)
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
@@ -48,7 +62,7 @@ class User(db.Model):
 
 class Otp(db.Model):
     __tablename__ = 'otp'
-    otp_id = db.Column(db.Integer, primary_key=True)
+    otp_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'))
     otp = db.Column(db.String)
     validate = db.Column(db.DateTime)
@@ -56,7 +70,7 @@ class Otp(db.Model):
 
 class Post(db.Model):
     __tablename__ = 'post'
-    post_id = db.Column(db.Integer, primary_key=True)
+    post_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), primary_key=True)
     title = db.Column(db.String)
     address = db.Column(db.String)
@@ -79,7 +93,7 @@ class Post(db.Model):
 
 class Image(db.Model):
     __tablename__ = 'image'
-    image_id = db.Column(db.Integer, primary_key=True)
+    image_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     post_id = db.Column(db.Integer, db.ForeignKey('post_id'))
     image_url = db.Column(db.String)
 

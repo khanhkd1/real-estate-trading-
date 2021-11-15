@@ -1,11 +1,12 @@
+from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_restful import Resource
 from database.db import db
 from database.models import Post, Image, User
-from flask_restful import Resource
 from config import FORMAT_STRING_DATETIME
-from flask import Response, jsonify
 
 
 class PostsApi(Resource):
+    # @jwt_required()
     def get(self):
         posts = db.session.query(Post).limit(1).all()
         for i in range(len(posts)):
@@ -29,5 +30,4 @@ class PostsApi(Resource):
             }
 
             del posts[i]['user_id'], posts[i]['time_priority']
-        return jsonify(posts)
-        # return Response(posts, mimetype="application/json", status=200)
+        return posts, 200
