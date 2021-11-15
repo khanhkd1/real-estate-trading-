@@ -1,4 +1,5 @@
 from .db import db
+from flask_bcrypt import generate_password_hash, check_password_hash
 
 
 class Privilege(db.Model):
@@ -11,6 +12,9 @@ class Avatar(db.Model):
     __tablename__ = 'avatar'
     avatar_id = db.Column(db.Integer, primary_key=True)
     avatar_url = db.Column(db.String)
+
+    def __repr__(self):
+        return self.avatar_url
 
 
 class User(db.Model):
@@ -25,6 +29,21 @@ class User(db.Model):
     privilege_id = db.Column(db.Integer, db.ForeignKey('privilege.privilege_id'), primary_key=True)
     avatar_id = db.Column(db.Integer, db.ForeignKey('avatar.avatar_id'), primary_key=True)
     verified = db.Column(db.Boolean)
+
+    def hash_password(self):
+        self.password = generate_password_hash(self.password).decode('utf8')
+
+    def check_password(self, password):
+        return check_password_hash(self.password, password)
+
+    def sign_up(self):
+        self.hash_password()
+        db.session.add(self)
+        db.session.commit()
+        return self
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
 
 class Otp(db.Model):
