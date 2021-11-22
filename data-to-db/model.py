@@ -6,7 +6,7 @@ Base = declarative_base()
 
 # khoi tao ket noi vao co so du lieu
 def connect_to_db():
-    engine_ = create_engine('mysql+mysqldb://root:vjpvjp123A01@localhost/real-estate-trading?charset=utf8mb4')
+    engine_ = create_engine('mysql+mysqldb://root:pass@localhost/real-estate-trading?charset=utf8mb4')
     session_ = sessionmaker(bind=engine_)
     return session_
 

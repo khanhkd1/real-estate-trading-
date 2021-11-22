@@ -2,13 +2,21 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource
 from database.db import db
 from database.models import Post, Image, User
+from flask import request
+from sqlalchemy import or_
 from config import FORMAT_STRING_DATETIME
+from function.function import get_default
 
 
 class PostsApi(Resource):
     # @jwt_required()
     def get(self):
-        posts = db.session.query(Post).limit(1).all()
+        limit, page, offset, order, search_values = get_default(request.args)
+        posts = db.session.query(Post)
+        if search_values is not None:
+            for search_value in search_values:
+                posts = posts.filter(or_(key.like('%' + search_value.lower() + '%') for key in Post.__table__.columns))
+        posts = posts.order_by(order).offset(offset).limit(limit).all()
         for i in range(len(posts)):
             posts[i] = posts[i].as_dict()
 
