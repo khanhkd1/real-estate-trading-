@@ -1,5 +1,5 @@
 from database.db import db
-from database.models import User, Privilege, Avatar
+from database.models import Privilege, Avatar
 
 
 def process_user(user):
