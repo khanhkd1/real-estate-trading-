@@ -1,6 +1,7 @@
 aniso8601
 backports.entry-points-selectable
 bcrypt
+blinker
 certifi
 cffi
 click
@@ -9,6 +10,7 @@ filelock
 Flask
 Flask-Bcrypt
 Flask-JWT-Extended
+Flask-Mail
 Flask-RESTful
 Flask-SQLAlchemy
 greenlet
