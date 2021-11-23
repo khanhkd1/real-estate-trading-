@@ -11,7 +11,8 @@ def process_user(user):
 
 
 def get_default(parameters):
-    order = Post.post_id
+    filters = {}
+    order = Post.time_priority
     limit = 20
     if 'page' not in parameters:
         page = 1
@@ -19,9 +20,12 @@ def get_default(parameters):
         page = int(parameters['page'])
     offset = (page - 1) * limit
 
+    if 'filter' in parameters and parameters['filter'] != "":
+        for filter_ in parameters['filter'].split(','):
+            filters[filter_.split(':')[0]] = filter_.split(':')[1]
     if "search" in parameters and parameters['search'] != "":
         search_values = parameters['search'].split(",")
     else:
         search_values = None
 
-    return limit, page, offset, order, search_values
+    return limit, page, offset, order, search_values, filters
