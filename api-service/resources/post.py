@@ -35,8 +35,8 @@ class PostsApi(Resource):
 
             del posts[i]['time_upload'], posts[i]['address'], posts[i]['description'], posts[i]['distance'], \
                 posts[i]['longitude'], posts[i]['latitude'], posts[i]['investor'], posts[i]['price'], \
-                posts[i]['user']['email'], posts[i]['user']['phone'], posts[i]['user']['address'], posts[i]['user_id'], \
-                posts[i]['time_priority']
+                posts[i]['user']['email'], posts[i]['user']['phone'], posts[i]['user']['address'], \
+                posts[i]['user_id'], posts[i]['time_priority']
 
         return {
                    'paging': {
@@ -46,6 +46,11 @@ class PostsApi(Resource):
                    },
                    'posts': posts
                }, 200
+
+    # @jwt_required()
+    # def post(self):
+    #     user_id = int(get_jwt_identity())
+    #     pass
 
 
 class PostApi(Resource):
@@ -60,14 +65,9 @@ class PostApi(Resource):
 
     @jwt_required()
     def put(self, post_id):
-        user_id = int(get_jwt_identity())
-        post = db.session.query(Post).filter(Post.post_id == post_id).first()
-        if post is None:
-            return {'error': 'post_id not found'}, 400
-
-        post = post_process(post)
-        if user_id != post['user_id']:
-            return {'error': 'user have no permission'}, 401
+        status, msg, code = get_post_check_user(post_id)
+        if not status:
+            return msg, code
 
         data = request.get_json()
         for col in ['user_id', 'post_id', 'time_priority', 'time_upload']:
@@ -80,6 +80,28 @@ class PostApi(Resource):
         post = post_process(db.session.query(Post).filter(Post.post_id == post_id).first())
         del post['user_id'], post['time_priority']
         return post, 200
+
+    @jwt_required()
+    def delete(self, post_id):
+        status, msg, code = get_post_check_user(post_id)
+        if not status:
+            return msg, code
+
+        db.session.query(Post).filter(Post.post_id == post_id).delete()
+        db.session.commit()
+        return {'msg': 'done'}, 200
+
+
+def get_post_check_user(post_id):
+    user_id = int(get_jwt_identity())
+    post = db.session.query(Post).filter(Post.post_id == post_id).first()
+    if post is None:
+        return False, {'error': 'post_id not found'}, 400
+
+    post = post_process(post)
+    if user_id != post['user_id']:
+        return False, {'error': 'user have no permission'}, 401
+    return True, None, None
 
 
 def post_process(post):
