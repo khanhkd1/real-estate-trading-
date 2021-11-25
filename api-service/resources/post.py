@@ -9,7 +9,6 @@ from function.function import get_default
 
 
 class PostsApi(Resource):
-    # @jwt_required()
     def get(self):
         limit, page, offset, order, search_values, filters = get_default(request.args)
         posts = db.session.query(Post)
@@ -32,36 +31,75 @@ class PostsApi(Resource):
         posts = posts.order_by(desc(order)).offset(offset).limit(limit).all()
 
         for i in range(len(posts)):
-            posts[i] = posts[i].as_dict()
+            posts[i] = post_process(posts[i])
 
-            # images
-            images = db.session.query(Image).filter(Image.post_id == posts[i]['post_id']).all()
-            posts[i]['images'] = [str(image) for image in images]
-
-            # user
-            user = db.session.query(User).filter(User.user_id == posts[i]['user_id']).one()
-            posts[i]['user'] = user.fullname
-
-            del posts[i]['user_id'], posts[i]['time_priority'], posts[i]['time_upload'], posts[i]['address'], \
-                posts[i]['description'], posts[i]['distance'], posts[i]['longitude'], posts[i]['latitude'], \
-                posts[i]['investor'], posts[i]['price']
-
-            # datetime type to string
-            # posts[i]['time_upload'] = posts[i]['time_upload'].strftime(FORMAT_STRING_DATETIME)
-            # posts[i]['time_priority'] = posts[i]['time_priority'].strftime(FORMAT_STRING_DATETIME)
-
-            # posts[i]['user'] = {
-            #     'fullname': user.fullname,
-            #     'email': user.email,
-            #     'phone': user.phone,
-            #     'address': user.address,
-            # }
+            del posts[i]['time_upload'], posts[i]['address'], posts[i]['description'], posts[i]['distance'], \
+                posts[i]['longitude'], posts[i]['latitude'], posts[i]['investor'], posts[i]['price'], \
+                posts[i]['user']['email'], posts[i]['user']['phone'], posts[i]['user']['address'], posts[i]['user_id'], \
+                posts[i]['time_priority']
 
         return {
                    'paging': {
                        'total_count': total_count,
-                       'total_page': total_count//limit if total_count % limit == 0 else total_count//limit + 1,
+                       'total_page': total_count // limit if total_count % limit == 0 else total_count // limit + 1,
                        'current_page': page
                    },
                    'posts': posts
                }, 200
+
+
+class PostApi(Resource):
+    @jwt_required()
+    def get(self, post_id):
+        post = db.session.query(Post).filter(Post.post_id == post_id).first()
+        if post is None:
+            return {'error': 'post_id not found'}, 400
+        post = post_process(post)
+        del post['user_id'], post['time_priority']
+        return post, 200
+
+    @jwt_required()
+    def put(self, post_id):
+        user_id = int(get_jwt_identity())
+        post = db.session.query(Post).filter(Post.post_id == post_id).first()
+        if post is None:
+            return {'error': 'post_id not found'}, 400
+
+        post = post_process(post)
+        if user_id != post['user_id']:
+            return {'error': 'user have no permission'}, 401
+
+        data = request.get_json()
+        for col in ['user_id', 'post_id', 'time_priority', 'time_upload']:
+            if col in data.keys():
+                del data[col]
+
+        db.session.query(Post).filter(Post.post_id == post_id).update(data)
+        db.session.commit()
+
+        post = post_process(db.session.query(Post).filter(Post.post_id == post_id).first())
+        del post['user_id'], post['time_priority']
+        return post, 200
+
+
+def post_process(post):
+    post = post.as_dict()
+
+    # image
+    images = db.session.query(Image).filter(Image.post_id == post['post_id']).all()
+    post['images'] = [str(image) for image in images]
+
+    # user
+    user = db.session.query(User).filter(User.user_id == post['user_id']).one()
+    post['user'] = {
+        'fullname': user.fullname,
+        'email': user.email,
+        'phone': user.phone,
+        'address': user.address,
+    }
+
+    # datetime type to string
+    post['time_upload'] = post['time_upload'].strftime(FORMAT_STRING_DATETIME)
+    post['time_priority'] = post['time_priority'].strftime(FORMAT_STRING_DATETIME)
+
+    return post
