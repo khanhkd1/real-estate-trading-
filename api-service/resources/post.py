@@ -80,7 +80,10 @@ class PostApi(Resource):
 
         post = post_process(db.session.query(Post).filter(Post.post_id == post_id).first())
         del post['user_id'], post['time_priority']
-        return post, 200
+        return {
+            'msg': 'Update successfully',
+            'post': post
+        }, 200
 
     @jwt_required()
     def delete(self, post_id):
