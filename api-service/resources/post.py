@@ -47,10 +47,11 @@ class PostsApi(Resource):
                    'posts': posts
                }, 200
 
-    # @jwt_required()
-    # def post(self):
-    #     user_id = int(get_jwt_identity())
-    #     pass
+    @jwt_required()
+    def post(self):
+        user_id = int(get_jwt_identity())
+        data = request.get_json()
+        pass
 
 
 class PostApi(Resource):

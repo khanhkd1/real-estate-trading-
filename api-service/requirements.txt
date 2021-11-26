@@ -31,3 +31,4 @@ SQLAlchemy
 virtualenv
 virtualenv-clone
 Werkzeug
+wtforms

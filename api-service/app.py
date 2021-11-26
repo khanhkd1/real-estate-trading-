@@ -9,7 +9,10 @@ from config import SQLALCHEMY_DATABASE_URI, JWT_SECRET_KEY, MAIL_PORT, MAIL_USER
     MAIL_USE_TLS
 
 app = Flask(__name__)
+
 app.config["JWT_SECRET_KEY"] = JWT_SECRET_KEY
+app.config['SECRET_KEY'] = "secretkey"
+app.config['WTF_CSRF_SECRET_KEY'] = 't1NP63m4wnBg6nyHYKfmc2TpCOGI4nssa'
 app.config['MAIL_SERVER'] = MAIL_SERVER
 app.config['MAIL_PORT'] = MAIL_PORT
 app.config['MAIL_USE_TLS'] = MAIL_USE_TLS
@@ -17,7 +20,7 @@ app.config['MAIL_USERNAME'] = MAIL_USERNAME
 app.config['MAIL_PASSWORD'] = MAIL_PASSWORD
 
 mail = Mail(app)
-from resources.routes import initialize_routes
+from resources.routes import initialize_routes_api
 
 api = Api(app)
 bcrypt = Bcrypt(app)
@@ -27,4 +30,4 @@ app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 initialize_db(app)
-initialize_routes(api)
+initialize_routes_api(api)
