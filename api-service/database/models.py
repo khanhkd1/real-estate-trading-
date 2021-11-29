@@ -64,7 +64,6 @@ class Post(db.Model):
     toilet = db.Column(db.Integer)
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
-    distance = db.Column(db.Float)
     time_upload = db.Column(db.DateTime)
     time_priority = db.Column(db.DateTime)
     sold = db.Column(db.Boolean)
@@ -77,7 +76,7 @@ class Post(db.Model):
 class Image(db.Model):
     __tablename__ = 'image'
     image_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    post_id = db.Column(db.Integer, db.ForeignKey('post_id'))
+    post_id = db.Column(db.Integer, db.ForeignKey('post.post_id'))
     image_url = db.Column(db.String)
 
     def __repr__(self):

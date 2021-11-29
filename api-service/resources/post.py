@@ -4,6 +4,7 @@ from database.db import db
 from database.models import Post, Image, User
 from flask import request
 from sqlalchemy import or_, desc
+import datetime
 from config import FORMAT_STRING_DATETIME
 from function.function import get_default
 
@@ -11,24 +12,13 @@ from function.function import get_default
 class PostsApi(Resource):
     def get(self):
         posts = db.session.query(Post)
-        return query(posts)
-
-    @jwt_required()
-    def post(self):
-        user_id = int(get_jwt_identity())
-        data = request.get_json()
-        pass
+        return query_posts(posts)
 
 
 class PostApi(Resource):
     @jwt_required()
     def get(self, post_id):
-        post = db.session.query(Post).filter(Post.post_id == post_id).first()
-        if post is None:
-            return {'error': 'post_id not found'}, 400
-        post = post_process(post)
-        del post['user_id'], post['time_priority']
-        return post, 200
+        return get_post_by_id(post_id)
 
     @jwt_required()
     def put(self, post_id):
@@ -67,10 +57,46 @@ class PostsUserApi(Resource):
     def get(self):
         user_id = int(get_jwt_identity())
         posts = db.session.query(Post).filter(Post.user_id == user_id)
-        return query(posts)
+        return query_posts(posts)
+
+    @jwt_required()
+    def post(self):
+        user_id = int(get_jwt_identity())
+        data = request.get_json()
+        post = Post(
+            user_id=user_id,
+            title=data['title'],
+            address=data['address'],
+            bedroom=data['bedroom'],
+            toilet=data['toilet'],
+            investor=data['investor'],
+            acreage=data['acreage'],
+            price=data['price'],
+            latitude=data['latitude'],
+            longitude=data['longitude'],
+            sold=False,
+            time_upload=datetime.datetime.now(),
+            time_priority=datetime.datetime.now(),
+            description=data['description']
+        )
+        db.session.add(post)
+        db.session.flush()
+
+        post_id = post.post_id
+        db.session.commit()
+
+        for image_url in data['images']:
+            image = Image(
+                post_id=post_id,
+                image_url=image_url
+            )
+            db.session.add(image)
+        db.session.commit()
+
+        return get_post_by_id(post_id)
 
 
-def query(posts):
+def query_posts(posts):
     limit, page, offset, order, search_values, filters = get_default(request.args)
     # filter
     for key in filters.keys():
@@ -92,10 +118,9 @@ def query(posts):
     for i in range(len(posts)):
         posts[i] = post_process(posts[i])
 
-        del posts[i]['time_upload'], posts[i]['address'], posts[i]['description'], posts[i]['distance'], \
-            posts[i]['longitude'], posts[i]['latitude'], posts[i]['investor'], posts[i]['price'], \
-            posts[i]['user']['email'], posts[i]['user']['phone'], posts[i]['user']['address'], \
-            posts[i]['user_id'], posts[i]['time_priority']
+        del posts[i]['time_upload'], posts[i]['address'], posts[i]['description'], posts[i]['longitude'], \
+            posts[i]['latitude'], posts[i]['investor'], posts[i]['price'], posts[i]['user']['email'], \
+            posts[i]['user']['phone'], posts[i]['user']['address'], posts[i]['user_id'], posts[i]['time_priority']
 
     return {
                'paging': {
@@ -122,6 +147,8 @@ def get_post_check_user(post_id):
 def post_process(post):
     post = post.as_dict()
 
+    post['title'] = post['title'].strip().title()
+
     # image
     images = db.session.query(Image).filter(Image.post_id == post['post_id']).all()
     post['images'] = [str(image) for image in images]
@@ -140,3 +167,12 @@ def post_process(post):
     post['time_priority'] = post['time_priority'].strftime(FORMAT_STRING_DATETIME)
 
     return post
+
+
+def get_post_by_id(post_id):
+    post = db.session.query(Post).filter(Post.post_id == post_id).first()
+    if post is None:
+        return {'error': 'post_id not found'}, 400
+    post = post_process(post)
+    del post['user_id'], post['time_priority']
+    return post, 200
