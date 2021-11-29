@@ -10,42 +10,8 @@ from function.function import get_default
 
 class PostsApi(Resource):
     def get(self):
-        limit, page, offset, order, search_values, filters = get_default(request.args)
         posts = db.session.query(Post)
-
-        # filter
-        for key in filters.keys():
-            if key == 'address':
-                posts = posts.filter(Post.address.like(f'%{filters[key].lower()}%'))
-            elif key == 'bedroom':
-                posts = posts.filter(Post.bedroom == int(filters[key]))
-            else:
-                posts = posts.filter(Post.toilet == int(filters[key]))
-
-        # search
-        if search_values is not None:
-            for search_value in search_values:
-                posts = posts.filter(or_(key.like('%' + search_value.lower() + '%') for key in Post.__table__.columns))
-
-        total_count = posts.count()
-        posts = posts.order_by(desc(order)).offset(offset).limit(limit).all()
-
-        for i in range(len(posts)):
-            posts[i] = post_process(posts[i])
-
-            del posts[i]['time_upload'], posts[i]['address'], posts[i]['description'], posts[i]['distance'], \
-                posts[i]['longitude'], posts[i]['latitude'], posts[i]['investor'], posts[i]['price'], \
-                posts[i]['user']['email'], posts[i]['user']['phone'], posts[i]['user']['address'], \
-                posts[i]['user_id'], posts[i]['time_priority']
-
-        return {
-                   'paging': {
-                       'total_count': total_count,
-                       'total_page': total_count // limit if total_count % limit == 0 else total_count // limit + 1,
-                       'current_page': page
-                   },
-                   'posts': posts
-               }, 200
+        return query(posts)
 
     @jwt_required()
     def post(self):
@@ -81,9 +47,9 @@ class PostApi(Resource):
         post = post_process(db.session.query(Post).filter(Post.post_id == post_id).first())
         del post['user_id'], post['time_priority']
         return {
-            'msg': 'Update successfully',
-            'post': post
-        }, 200
+                   'msg': 'Update successfully',
+                   'post': post
+               }, 200
 
     @jwt_required()
     def delete(self, post_id):
@@ -94,6 +60,51 @@ class PostApi(Resource):
         db.session.query(Post).filter(Post.post_id == post_id).delete()
         db.session.commit()
         return {'msg': 'done'}, 200
+
+
+class PostsUserApi(Resource):
+    @jwt_required()
+    def get(self):
+        user_id = int(get_jwt_identity())
+        posts = db.session.query(Post).filter(Post.user_id == user_id)
+        return query(posts)
+
+
+def query(posts):
+    limit, page, offset, order, search_values, filters = get_default(request.args)
+    # filter
+    for key in filters.keys():
+        if key == 'address':
+            posts = posts.filter(Post.address.like(f'%{filters[key].lower()}%'))
+        elif key == 'bedroom':
+            posts = posts.filter(Post.bedroom == int(filters[key]))
+        else:
+            posts = posts.filter(Post.toilet == int(filters[key]))
+
+    # search
+    if search_values is not None:
+        for search_value in search_values:
+            posts = posts.filter(or_(key.like('%' + search_value.lower() + '%') for key in Post.__table__.columns))
+
+    total_count = posts.count()
+    posts = posts.order_by(desc(order)).offset(offset).limit(limit).all()
+
+    for i in range(len(posts)):
+        posts[i] = post_process(posts[i])
+
+        del posts[i]['time_upload'], posts[i]['address'], posts[i]['description'], posts[i]['distance'], \
+            posts[i]['longitude'], posts[i]['latitude'], posts[i]['investor'], posts[i]['price'], \
+            posts[i]['user']['email'], posts[i]['user']['phone'], posts[i]['user']['address'], \
+            posts[i]['user_id'], posts[i]['time_priority']
+
+    return {
+               'paging': {
+                   'total_count': total_count,
+                   'total_page': total_count // limit if total_count % limit == 0 else total_count // limit + 1,
+                   'current_page': page
+               },
+               'posts': posts
+           }, 200
 
 
 def get_post_check_user(post_id):

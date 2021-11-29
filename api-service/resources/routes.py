@@ -1,4 +1,4 @@
-from .post import PostsApi, PostApi
+from .post import PostsApi, PostApi, PostsUserApi
 from .auth import SignupApi, LoginApi
 from .user import UserApi
 from .reset_password import ForgotPassword, ResetPassword
@@ -8,6 +8,7 @@ from .image import ImageApi
 def initialize_routes_api(api):
     api.add_resource(PostsApi, '/api/posts')
     api.add_resource(PostApi, '/api/post/<int:post_id>')
+    api.add_resource(PostsUserApi, '/api/posts/user')
 
     api.add_resource(SignupApi, '/api/auth/signup')
     api.add_resource(LoginApi, '/api/auth/login')
