@@ -44,6 +44,14 @@ class UserApi(Resource):
             db.session.query(User).filter(User.user_id == user_id).update(body)
         db.session.commit()
         user = db.session.query(User).filter(User.user_id == user_id).first()
+
+        if user.email is not None and user.fullname is not None and user.phone is not None:
+            db.session.query(User).filter(User.user_id == user_id).update({'verified': True})
+        else:
+            db.session.query(User).filter(User.user_id == user_id).update({'verified': False})
+        db.session.commit()
+
+        user = db.session.query(User).filter(User.user_id == user_id).first()
         return {
             'msg': 'Update successfully',
             'user': process_user(user)

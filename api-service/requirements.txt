@@ -32,3 +32,4 @@ virtualenv
 virtualenv-clone
 Werkzeug
 wtforms
+requests

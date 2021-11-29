@@ -14,15 +14,6 @@ class Privilege(db.Model):
         return self.name
 
 
-class Avatar(db.Model):
-    __tablename__ = 'avatar'
-    avatar_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    avatar_url = db.Column(db.String)
-
-    def __repr__(self):
-        return self.avatar_url
-
-
 class User(db.Model):
     __tablename__ = 'user'
     user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -33,7 +24,7 @@ class User(db.Model):
     address = db.Column(db.String)
     phone = db.Column(db.String)
     privilege_id = db.Column(db.Integer, db.ForeignKey('privilege.privilege_id'), primary_key=True)
-    avatar_id = db.Column(db.Integer, db.ForeignKey('avatar.avatar_id'), primary_key=True)
+    avatar = db.Column(db.String)
     verified = db.Column(db.Boolean)
 
     def hash_password(self):
@@ -58,14 +49,6 @@ class User(db.Model):
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
-
-class Otp(db.Model):
-    __tablename__ = 'otp'
-    otp_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'))
-    otp = db.Column(db.String)
-    validate = db.Column(db.DateTime)
 
 
 class Post(db.Model):

@@ -3,7 +3,10 @@ from flask_restful import Api
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flask_mail import Mail
-from database.db import initialize_db
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
+from database.db import initialize_db, db
+from database.models import User, Post, Image
 
 from config import SQLALCHEMY_DATABASE_URI, JWT_SECRET_KEY, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD, MAIL_SERVER, \
     MAIL_USE_TLS
@@ -18,6 +21,11 @@ app.config['MAIL_PORT'] = MAIL_PORT
 app.config['MAIL_USE_TLS'] = MAIL_USE_TLS
 app.config['MAIL_USERNAME'] = MAIL_USERNAME
 app.config['MAIL_PASSWORD'] = MAIL_PASSWORD
+
+admin = Admin(app)
+admin.add_view(ModelView(User, db.session))
+admin.add_view(ModelView(Post, db.session))
+admin.add_view(ModelView(Image, db.session))
 
 mail = Mail(app)
 from resources.routes import initialize_routes_api

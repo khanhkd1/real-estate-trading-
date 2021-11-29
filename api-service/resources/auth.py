@@ -16,7 +16,7 @@ class SignupApi(Resource):
             address=None,
             phone=None,
             privilege_id=2,
-            avatar_id=1,
+            avatar='https://i.imgur.com/6PIeBYs.png',
             verified=False,
         )
         if user.sign_up():
@@ -31,5 +31,9 @@ class LoginApi(Resource):
         if user is None or not user.check_password(body['password']):
             return {'error': 'Username or Password invalid'}, 401
 
-        return {'token': user.sign_in(),
-                'user': process_user(user)}, 200
+        token = user.sign_in()
+        user = process_user(user)
+        del user['email'], user['fullname'], user['address'], user['phone'], user['verified'], user['privilege']
+
+        return {'token': token,
+                'user': user}, 200
