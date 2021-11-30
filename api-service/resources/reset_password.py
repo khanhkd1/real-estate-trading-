@@ -24,16 +24,16 @@ class ForgotPassword(Resource):
         if not user:
             return {'error': "Couldn't find the user with given email address"}, 400
 
-        expires = datetime.timedelta(hours=24)
+        expires = datetime.timedelta(hours=1)
         reset_token = create_access_token(str(user.user_id), expires_delta=expires)
 
         send_email('[Real Estate Trading] Reset Your Password',
                    sender='khanhkd.digitalocean@gmail.com',
                    recipients=[user.email],
                    text_body=render_template('email/reset_password.txt',
-                                             url=url + reset_token),
+                                             url=url + reset_token, username=user.username),
                    html_body=render_template('email/reset_password.html',
-                                             url=url + reset_token))
+                                             url=url + reset_token, username=user.username))
         return {'msg': 'Reset password request has been sent to your email'}, 200
 
 

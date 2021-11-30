@@ -28,6 +28,7 @@ admin.add_view(ModelView(Post, db.session))
 admin.add_view(ModelView(Image, db.session))
 
 mail = Mail(app)
+
 from resources.routes import initialize_routes_api
 
 api = Api(app)
