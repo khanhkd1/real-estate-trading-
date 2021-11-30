@@ -9,13 +9,13 @@ from database.db import initialize_db, db
 from database.models import User, Post, Image
 
 from config import SQLALCHEMY_DATABASE_URI, JWT_SECRET_KEY, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD, MAIL_SERVER, \
-    MAIL_USE_TLS
+    MAIL_USE_TLS, SECRET_KEY, WTF_CSRF_SECRET_KEY
 
 app = Flask(__name__)
 
 app.config["JWT_SECRET_KEY"] = JWT_SECRET_KEY
-app.config['SECRET_KEY'] = "secretkey"
-app.config['WTF_CSRF_SECRET_KEY'] = 't1NP63m4wnBg6nyHYKfmc2TpCOGI4nssa'
+app.config['SECRET_KEY'] = SECRET_KEY
+app.config['WTF_CSRF_SECRET_KEY'] = WTF_CSRF_SECRET_KEY
 app.config['MAIL_SERVER'] = MAIL_SERVER
 app.config['MAIL_PORT'] = MAIL_PORT
 app.config['MAIL_USE_TLS'] = MAIL_USE_TLS
