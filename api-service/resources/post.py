@@ -153,6 +153,9 @@ def post_process(post):
     images = db.session.query(Image).filter(Image.post_id == post['post_id']).all()
     post['images'] = [str(image) for image in images]
 
+    if not post['images']:
+        post['images'].append('https://i.imgur.com/RYKgdEW.png')
+
     # user
     user = db.session.query(User).filter(User.user_id == post['user_id']).one()
     post['user'] = {
