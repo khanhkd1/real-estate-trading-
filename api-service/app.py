@@ -8,19 +8,9 @@ from flask_admin.contrib.sqla import ModelView
 from database.db import initialize_db, db
 from database.models import User, Post, Image
 
-from config import SQLALCHEMY_DATABASE_URI, JWT_SECRET_KEY, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD, MAIL_SERVER, \
-    MAIL_USE_TLS, SECRET_KEY, WTF_CSRF_SECRET_KEY
-
 app = Flask(__name__)
 
-app.config["JWT_SECRET_KEY"] = JWT_SECRET_KEY
-app.config['SECRET_KEY'] = SECRET_KEY
-app.config['WTF_CSRF_SECRET_KEY'] = WTF_CSRF_SECRET_KEY
-app.config['MAIL_SERVER'] = MAIL_SERVER
-app.config['MAIL_PORT'] = MAIL_PORT
-app.config['MAIL_USE_TLS'] = MAIL_USE_TLS
-app.config['MAIL_USERNAME'] = MAIL_USERNAME
-app.config['MAIL_PASSWORD'] = MAIL_PASSWORD
+app.config.from_pyfile('config.py')
 
 admin = Admin(app)
 admin.add_view(ModelView(User, db.session))
@@ -34,9 +24,6 @@ from resources.routes import initialize_routes_api
 api = Api(app)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
-
-app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 initialize_db(app)
 initialize_routes_api(api)
