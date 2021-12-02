@@ -14,6 +14,12 @@ class Privilege(db.Model):
         return self.name
 
 
+follow_table = db.Table('follow',
+                        db.Column('user_id', db.Integer, db.ForeignKey('user.user_id'), primary_key=True),
+                        db.Column('post_id', db.Integer, db.ForeignKey('post.post_id'), primary_key=True)
+                        )
+
+
 class User(db.Model):
     __tablename__ = 'user'
     user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -26,6 +32,8 @@ class User(db.Model):
     privilege_id = db.Column(db.Integer, db.ForeignKey('privilege.privilege_id'), primary_key=True)
     avatar = db.Column(db.String)
     verified = db.Column(db.Boolean)
+
+    followed_posts = db.relationship('Post', secondary=follow_table, back_populates='users')
 
     def hash_password(self):
         self.password = generate_password_hash(self.password).decode('utf8')
@@ -68,6 +76,8 @@ class Post(db.Model):
     time_priority = db.Column(db.DateTime)
     sold = db.Column(db.Boolean)
     description = db.Column(db.String)
+
+    users = db.relationship('User', secondary=follow_table, back_populates='followed_posts')
 
     def as_dict(self):
         return {c.name: getattr(self, c.name) for c in self.__table__.columns}

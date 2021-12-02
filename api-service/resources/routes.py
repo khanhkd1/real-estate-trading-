@@ -3,12 +3,16 @@ from .auth import SignupApi, LoginApi
 from .user import UserApi
 from .reset_password import ForgotPassword, ResetPassword
 from .image import ImageApi
+from .follow import FollowApi, FollowsApi
 
 
 def initialize_routes_api(api):
     api.add_resource(PostsApi, '/api/posts')
     api.add_resource(PostApi, '/api/post/<int:post_id>')
     api.add_resource(PostsUserApi, '/api/posts/user')
+
+    api.add_resource(FollowsApi, '/api/posts/follow')
+    api.add_resource(FollowApi, '/api/post/follow/<int:post_id>')
 
     api.add_resource(SignupApi, '/api/auth/signup')
     api.add_resource(LoginApi, '/api/auth/login')

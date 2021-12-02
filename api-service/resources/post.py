@@ -144,8 +144,13 @@ def get_post_check_user(post_id):
     return True, None, None
 
 
-def post_process(post):
-    post = post.as_dict()
+def post_process(post, followed=False):
+    if not followed:
+        post = post.as_dict()
+
+        # datetime type to string
+        post['time_upload'] = post['time_upload'].strftime(FORMAT_STRING_DATETIME)
+        post['time_priority'] = post['time_priority'].strftime(FORMAT_STRING_DATETIME)
 
     post['title'] = post['title'].strip().title()
 
@@ -164,10 +169,6 @@ def post_process(post):
         'phone': user.phone,
         'address': user.address,
     }
-
-    # datetime type to string
-    post['time_upload'] = post['time_upload'].strftime(FORMAT_STRING_DATETIME)
-    post['time_priority'] = post['time_priority'].strftime(FORMAT_STRING_DATETIME)
 
     return post
 
