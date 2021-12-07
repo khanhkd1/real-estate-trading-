@@ -7,10 +7,11 @@ from function.function import process_user
 
 class SignupApi(Resource):
     def post(self):
-        body = request.get_json()
+        username = request.form['username']
+        password = request.form['password']
         user = User(
-            username=body['username'],
-            password=body['password'],
+            username=username,
+            password=password,
             email=None,
             fullname=None,
             address=None,
@@ -26,9 +27,10 @@ class SignupApi(Resource):
 
 class LoginApi(Resource):
     def post(self):
-        body = request.get_json()
-        user = db.session.query(User).filter(User.username == body['username']).first()
-        if user is None or not user.check_password(body['password']):
+        username = request.form['username']
+        password = request.form['password']
+        user = db.session.query(User).filter(User.username == username).first()
+        if user is None or not user.check_password(password):
             return {'error': 'Username or Password invalid'}, 401
 
         token = user.sign_in()
