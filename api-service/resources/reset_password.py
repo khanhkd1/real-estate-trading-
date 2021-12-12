@@ -18,8 +18,7 @@ class ResetPasswordForm(FlaskForm):
 class ForgotPassword(Resource):
     def post(self):
         url = request.host_url + 'reset/'
-        body = request.get_json()
-        email = body.get('email')
+        email = request.form['email']
         user = db.session.query(User).filter(User.email == email).first()
         if not user:
             return {'error': "Couldn't find the user with given email address"}, 400
