@@ -165,6 +165,7 @@ def post_process(post, followed=False):
     user = db.session.query(User).filter(User.user_id == post['user_id']).one()
     post['user'] = {
         'fullname': user.fullname,
+        'avatar': user.avatar,
         'email': user.email,
         'phone': user.phone,
         'address': user.address,
