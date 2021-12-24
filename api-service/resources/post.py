@@ -18,7 +18,8 @@ class PostsApi(Resource):
 class PostApi(Resource):
     @jwt_required()
     def get(self, post_id):
-        return get_post_by_id(post_id)
+        user_id = int(get_jwt_identity())
+        return get_post_by_id(user_id, post_id)
 
     @jwt_required()
     def put(self, post_id):
@@ -174,10 +175,16 @@ def post_process(post, followed=False):
     return post
 
 
-def get_post_by_id(post_id):
+def get_post_by_id(user_id, post_id):
     post = db.session.query(Post).filter(Post.post_id == post_id).first()
-    if post is None:
-        return {'error': 'post_id not found'}, 400
-    post = post_process(post)
-    del post['user_id'], post['time_priority']
-    return post, 200
+    user = db.session.query(User).filter(User.user_id == user_id).first()
+    if post is None or user is None:
+        return {'error': 'query error'}, 400
+    post_tmp = post_process(post)
+    del post_tmp['user_id'], post_tmp['time_priority']
+
+    if post in user.followed_posts:
+        post_tmp['followed'] = True
+    else:
+        post_tmp['followed'] = False
+    return post_tmp, 200
