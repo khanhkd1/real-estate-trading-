@@ -12,10 +12,10 @@ app = Flask(__name__)
 
 app.config.from_pyfile('config.py')
 
-admin = Admin(app)
-admin.add_view(ModelView(User, db.session))
-admin.add_view(ModelView(Post, db.session))
-admin.add_view(ModelView(Image, db.session))
+# admin = Admin(app)
+# admin.add_view(ModelView(User, db.session))
+# admin.add_view(ModelView(Post, db.session))
+# admin.add_view(ModelView(Image, db.session))
 
 mail = Mail(app)
 
