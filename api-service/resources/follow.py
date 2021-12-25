@@ -40,7 +40,7 @@ class FollowApi(Resource):
         user = db.session.query(User).filter(User.user_id == user_id).first()
         post = db.session.query(Post).filter(Post.post_id == post_id).first()
         if user is not None and post is not None:
-            if post in user.posts:
+            if post in user.followed_posts:
                 user.followed_posts.remove(post)
                 db.session.commit()
                 return {'msg': 'done'}, 200
