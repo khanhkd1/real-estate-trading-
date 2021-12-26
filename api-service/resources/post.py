@@ -1,7 +1,7 @@
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_restful import Resource
 from database.db import db
-from database.models import Post, Image, User
+from database.models import Post, Image, User, Privilege
 from flask import request
 from sqlalchemy import or_, desc
 import datetime
@@ -140,7 +140,9 @@ def get_post_check_user(post_id):
         return False, {'error': 'post_id not found'}, 400
 
     post = post_process(post)
-    if user_id != post['user_id']:
+    user = db.session.quer(User).filter(User.user_id == user_id).fisrt()
+    if user_id != post['user_id'] or db.session.query(Privilege).filter(
+            Privilege.privilege_id == user.privilege_id).first().name != 'admin':
         return False, {'error': 'user have no permission'}, 401
     return True, None, None
 

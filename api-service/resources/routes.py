@@ -4,9 +4,15 @@ from .user import UserApi
 from .reset_password import ForgotPassword, ResetPassword
 from .image import ImageApi
 from .follow import FollowApi, FollowsApi
+from .admin.auth import AdminLoginApi
+from .admin.dashboard import DashBoard
 
 
 def initialize_routes_api(api):
+    # admin
+    api.add_resource(AdminLoginApi, '/api/admin/login')
+    api.add_resource(DashBoard, '/api/admin/dashboard')
+
     api.add_resource(PostsApi, '/api/posts')
     api.add_resource(PostApi, '/api/post/<int:post_id>')
     api.add_resource(PostsUserApi, '/api/posts/user')
