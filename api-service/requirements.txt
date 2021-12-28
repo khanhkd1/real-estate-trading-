@@ -9,7 +9,6 @@ click
 distlib
 filelock
 Flask
-Flask-Admin
 Flask-Bcrypt
 Flask-JWT-Extended
 Flask-Mail
