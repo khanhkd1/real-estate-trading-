@@ -1,4 +1,4 @@
-from .post import PostsApi, PostApi, PostsUserApi
+from .post import PostsApi, PostApi, PostsUserApi, PredictPrice
 from .auth import SignupApi, LoginApi
 from .user import UserApi
 from .reset_password import ForgotPassword, ResetPassword
@@ -18,6 +18,7 @@ def initialize_routes_api(api):
     api.add_resource(PostsApi, '/api/posts')
     api.add_resource(PostApi, '/api/post/<int:post_id>')
     api.add_resource(PostsUserApi, '/api/posts/user')
+    api.add_resource(PredictPrice, '/api/posts/predict')
 
     api.add_resource(FollowsApi, '/api/posts/follow')
     api.add_resource(FollowApi, '/api/post/follow/<int:post_id>')

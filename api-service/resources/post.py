@@ -7,6 +7,9 @@ from sqlalchemy import or_, desc
 import datetime
 from config import FORMAT_STRING_DATETIME
 from function.function import get_default
+import math
+import numpy as np
+from run import bayesian_ridge_model, address_encode, investor_encode
 
 
 class PostsApi(Resource):
@@ -63,7 +66,7 @@ class PostsUserApi(Resource):
     @jwt_required()
     def post(self):
         user_id = int(get_jwt_identity())
-        data = request.get_json()
+        data = request.form.to_dict()
         post = Post(
             user_id=user_id,
             title=data['title'],
@@ -94,7 +97,30 @@ class PostsUserApi(Resource):
             db.session.add(image)
         db.session.commit()
 
-        return get_post_by_id(post_id)
+        return get_post_by_id(user_id, post_id)
+
+
+class PredictPrice(Resource):
+    @jwt_required()
+    def post(self):
+        data = request.form.to_dict()
+        for col in ['address', 'bedroom', 'toilet', 'investor', 'acreage', 'lat', 'long']:
+            if col not in data:
+                return {'error': 'not enough columns'}, 400
+        return bayesian_ridge_model.predict(np.array([[
+            address_encode.transform([data['address']])[0],
+            int(data['bedroom']), int(data['toilet']),
+            investor_encode.transform([data['investor']])[0],
+            float(data['acreage']), float(data['lat']), float(data['long']),
+            distance_to_center([float(data['lat']), float(data['long'])])
+        ]]).reshape(1, -1))[0]
+
+
+def distance_to_center(location):
+    center = list(map(lambda x: math.radians(x), [21.028889, 105.8525]))
+    location = list(map(lambda x: math.radians(x), location))
+    return 6378 * math.acos((math.sin(location[0]) * math.sin(center[0]))
+                            + (math.cos(location[0]) * math.cos(center[0]) * math.cos(center[1] - location[1])))
 
 
 def query_posts(posts):
