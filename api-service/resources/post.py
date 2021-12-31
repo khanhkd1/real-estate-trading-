@@ -166,8 +166,8 @@ def get_post_check_user(post_id):
         return False, {'error': 'post_id not found'}, 400
 
     post = post_process(post)
-    user = db.session.quer(User).filter(User.user_id == user_id).fisrt()
-    if user_id != post['user_id'] or db.session.query(Privilege).filter(
+    user = db.session.query(User).filter(User.user_id == user_id).one()
+    if user_id != post['user_id'] and db.session.query(Privilege).filter(
             Privilege.privilege_id == user.privilege_id).first().name != 'admin':
         return False, {'error': 'user have no permission'}, 401
     return True, None, None
