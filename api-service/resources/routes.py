@@ -6,14 +6,15 @@ from .image import ImageApi
 from .follow import FollowApi, FollowsApi
 from .admin.auth import AdminLoginApi
 from .admin.dashboard import DashBoard
-from .admin.user import AdminUserApi
+from .admin.user import AdminUsersApi, AdminUserApi
 
 
 def initialize_routes_api(api):
     # admin
     api.add_resource(AdminLoginApi, '/api/admin/login')
     api.add_resource(DashBoard, '/api/admin/dashboard')
-    api.add_resource(AdminUserApi, '/api/admin/user')
+    api.add_resource(AdminUsersApi, '/api/admin/user')
+    api.add_resource(AdminUserApi, '/api/admin/user/<int:user_id>')
 
     api.add_resource(PostsApi, '/api/posts')
     api.add_resource(PostApi, '/api/post/<int:post_id>')
