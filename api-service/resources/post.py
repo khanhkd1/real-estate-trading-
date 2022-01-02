@@ -66,6 +66,8 @@ class PostsUserApi(Resource):
     @jwt_required()
     def post(self):
         user_id = int(get_jwt_identity())
+        if not db.session.query(User).filter(User.user_id == user_id).one().verified:
+            return {'error': 'user doesnt verify'}, 400
         data = request.form.to_dict()
         post = Post(
             user_id=user_id,
@@ -76,8 +78,8 @@ class PostsUserApi(Resource):
             investor=data['investor'],
             acreage=data['acreage'],
             price=data['price'],
-            latitude=data['latitude'],
-            longitude=data['longitude'],
+            latitude=data['lat'],
+            longitude=data['long'],
             sold=False,
             time_upload=datetime.datetime.now(),
             time_priority=datetime.datetime.now(),
