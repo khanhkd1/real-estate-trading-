@@ -30,7 +30,7 @@ class PostApi(Resource):
         if not status:
             return msg, code
 
-        data = request.get_json()
+        data = request.form.to_dict()
         for col in ['user_id', 'post_id', 'time_priority', 'time_upload']:
             if col in data.keys():
                 del data[col]
