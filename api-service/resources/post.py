@@ -91,10 +91,10 @@ class PostsUserApi(Resource):
         post_id = post.post_id
         db.session.commit()
 
-        for image_url in data['images']:
+        for image_url in data['images'].split(','):
             image = Image(
                 post_id=post_id,
-                image_url=image_url
+                image_url=image_url.strip()
             )
             db.session.add(image)
         db.session.commit()
