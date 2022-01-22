@@ -34,7 +34,6 @@ class PostApi(Resource):
         for col in ['user_id', 'post_id', 'time_priority', 'time_upload']:
             if col in data.keys():
                 del data[col]
-
         db.session.query(Post).filter(Post.post_id == post_id).update(data)
         db.session.commit()
 
