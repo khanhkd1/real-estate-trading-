@@ -1,0 +1,78 @@
+.newProduct{
+  .productPanel {
+    background-color: #fff;
+    padding: 24px;
+    border-radius: 5px;
+    margin-bottom: 24px;
+
+    .panelTitle {
+      font-size: 18px;
+      font-weight: bold;
+      color: $colorDefault;
+      margin-bottom: 24px;
+    }
+
+    .inputWarp {
+      margin-bottom: 10px;
+      .error {
+        color: $colorRed;
+        margin-top: 8px;
+        font-size: 12px;
+      }
+
+      label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #3f6079;;
+        display: block;
+        margin-bottom: 5px;
+
+        .required {
+          color: $colorRed;
+        }
+      }
+      .el-select {
+        width: 100%;
+      }
+    }
+    .mb-20 {
+      margin-bottom: 20px !important;
+    }
+    .productImageWarp {
+      margin-bottom: 12px !important;
+    }
+    .mb-10 {
+      margin-bottom: 10px !important;
+    }
+    .text-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: #3f6079;;
+      display: block;
+      margin-bottom: 5px;
+    }
+    .quill-editor{
+      height: 500px;
+      .ql-container{
+        height: 80%!important;
+      }
+    }
+  }
+
+  .bottomPanel {
+    height: 20px;
+    background: $colorWhite;
+    position: fixed;
+    bottom: 0;
+    width: calc(100vw - 340px);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 20px;
+    border-top: 1px solid $colorStroke;
+
+    button {
+      width: 200px;
+    }
+  }
+}

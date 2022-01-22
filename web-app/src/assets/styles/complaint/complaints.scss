@@ -1,0 +1,44 @@
+@import "@/assets/styles/variables";
+.complaint-warp {
+  height: 100% !important;
+  .el-row {
+    margin-bottom: 20px;
+    .header-content {
+      display: flex;
+      align-content: center;
+      justify-content: space-between;
+      .search-warp {
+        display: flex;
+        width: 50%;
+      }
+      .input-search {
+        margin-right: 20px;
+      }
+    }
+  }
+  .row-main {
+    margin-bottom: -20px !important;
+    height: calc(100% - 90px) !important;
+    .main {
+      height: 100% !important;
+      .paginationWarp {
+        padding: 5px 20px;
+        margin-bottom: 35px;
+        .el-pagination {
+          float: right;
+        }
+        .textInfo {
+          p {
+            font-size: .92857rem;
+            margin: 10px 0;
+          }
+        }
+      }
+      .label-code {
+        font-weight: bold;
+        color: $colorMain;
+        cursor: pointer;
+      }
+    }
+  }
+}

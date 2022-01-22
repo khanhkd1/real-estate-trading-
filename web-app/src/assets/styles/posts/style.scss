@@ -1,0 +1,151 @@
+.el-card__body {
+  padding: 20px;
+  height: 100% !important;
+  .listPost{
+    height: 100%;
+  }
+}
+.box-post{
+  min-width: 700px;
+  margin-bottom: 30px;
+  padding: 15px 10px;
+  box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+  border-radius: 5px;
+  .box-image-post{
+    display: flex;
+    justify-content: center;
+    border-radius: 5px;
+    box-shadow: 0 2px 12px 0 rgb(0 0 0 / 50%);
+    overflow: hidden;
+    cursor: pointer;
+    img{
+      width: 100%;
+      max-height: 130px;
+      object-fit: cover;
+      border-radius: 5px;
+      transform:scale(1, 1);
+      transition: all 0.5s;
+    }
+    img:hover{
+      transform: scale(1.1, 1.1);
+    }
+  }
+  .box-content-post{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0px 20px;
+    .title{
+      cursor: pointer;
+    }
+    .text{
+      margin-bottom: 10px;
+    }
+    .time{
+      font-size: 12px;
+    }
+    a{
+      text-decoration: none;
+      color: #253036;
+      transition: all 0.2s;
+    }
+    a:hover{
+      color: #253036;
+    }
+  }
+}
+.empty-posts{
+  padding: 50px;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  flex-direction: column;
+  .title{
+    font-size: 24px;
+    font-weight: 600;
+    text-align: center;
+  }
+  .tip{
+    text-align: center;
+  }
+}
+.paginationWarp {
+padding: 5px 20px;
+margin-bottom: 35px;
+.el-pagination {
+  float: right;
+}
+
+.textInfo {
+  p {
+    font-size: .92857rem;
+    margin: 10px 0;
+  }
+}
+}
+.posts{
+  height: calc(100vh - 155px);
+  overflow-y: scroll!important;
+  border-bottom: 2px solid #f7f7f7;
+}
+.actions{
+  position: absolute;
+  right: 0;
+}
+.posts::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  background-color: #FFF;
+  border: none;
+}
+.posts::-webkit-scrollbar-thumb {
+  background-color: #C0C4CC;
+  border-radius: 8px;
+}
+
+@media only screen and (max-width: 767px) {
+  .post{
+    .header {
+      margin-bottom: 15px;
+      .el-card__body{
+        height: 100% !important;
+        padding: 10px;
+        .style-header{
+          .btn-search{
+            button {
+              padding: 12px 15px;
+              span{
+                span{
+                  display: none;
+                }
+              }
+            }
+          }
+          .style-btn-card{
+            margin-top: 10px;
+            button {
+              float: left;
+            }
+          }
+        }
+      }
+    }
+    .paginationWarp{
+      padding: 20px;
+      margin-bottom: 30px;
+      .el-pagination {
+        float: none;
+        display: flex;
+        justify-content: center;
+        margin-bottom: 15px;
+      }
+      .textInfo {
+        p {
+          font-size: .92857rem;
+          margin: 10px 0;
+          text-align: center;
+        }
+      }
+    }
+  }
+}

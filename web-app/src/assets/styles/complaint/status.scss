@@ -1,0 +1,21 @@
+
+@import "@/assets/styles/variables";
+.status {
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-size: 12px;
+  color: $colorWhite;
+}
+
+.status-pending {
+  background-color: $colorSecond;
+}
+
+.status-procesing  {
+  background-color: $colorOrange;
+}
+
+.status-done  {
+  background-color: $colorGreen;
+}
